@@ -193,8 +193,17 @@ function generateInvoiceHTML(data) {
     <title>${data.shopName} - Invoice ${data.invoiceNo}</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Segoe UI', 'Inter', 'Arial', sans-serif; padding: 0.5in; background: white; font-size: 13px; line-height: 1.5; }
-        @media print { body { padding: 0.5in; margin: 0; } @page { size: A4; margin: 0.5in; } }
+        body {
+            font-family: 'Segoe UI', 'Inter', 'Arial', sans-serif;
+            padding: 0.5in;
+            background: white;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+        @media print {
+            body { padding: 0.5in; margin: 0; }
+            @page { size: A4; margin: 0.5in; }
+        }
         .invoice-container { max-width: 100%; margin: 0 auto; }
         .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #d4af37; padding-bottom: 18px; margin-bottom: 20px; }
         .company-info h1 { color: #1e3c72; font-size: 30px; margin: 0; }
@@ -202,15 +211,14 @@ function generateInvoiceHTML(data) {
         .contact-row { display: flex; justify-content: space-between; background: #f8fafd; padding: 12px 18px; border-radius: 14px; margin-bottom: 20px; font-size: 11px; border: 1px solid #e9edf2; }
         .customer-section { background: #f9fbfd; padding: 18px 24px; border-radius: 20px; margin: 15px 0 20px; border: 1px solid #e9edf2; }
         .customer-flex { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 20px; }
-        .customer-details { flex: 2; }
         .customer-details strong { color: #1e4a76; font-size: 14px; display: block; margin-bottom: 10px; border-left: 3px solid #d4af37; padding-left: 12px; }
         .shop-name { font-size: 18px; font-weight: 700; color: #0a2b3e; margin-bottom: 6px; }
         .invoice-badge { background: #1e4a76; padding: 12px 28px; border-radius: 60px; text-align: center; }
         .invoice-badge .inv-no { color: white; font-size: 20px; font-weight: 800; }
         .invoice-badge .inv-date { color: rgba(255,255,255,0.9); font-size: 11px; margin-top: 5px; }
-        table { width: 100%; border-collapse: collapse; margin: 20px 0; }
-        th { background: #eef2fa; padding: 12px 10px; border: 1px solid #e2e8f0; font-weight: 700; }
-        td { padding: 10px 10px; border: 1px solid #e2e8f0; }
+        .items-table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+        .items-table th { background: #eef2fa; padding: 12px 10px; border: 1px solid #e2e8f0; font-weight: 700; }
+        .items-table td { padding: 10px 10px; border: 1px solid #e2e8f0; }
         .text-right { text-align: right; }
         .totals-table { width: 100%; margin: 15px 0; border-collapse: collapse; }
         .totals-table td { padding: 12px 18px; border: 1px solid #e2e8f0; }
@@ -253,89 +261,111 @@ function generateInvoiceHTML(data) {
         </div>
     </div>
     <table class="items-table">
-        <thead><tr><th>ক্রম</th><th>পণ্যের বিবরণ</th><th>পরিমাণ</th><th>দাম (৳)</th><th>মোট (৳)</th></tr></thead>
+        <thead></table><th style="width:7%">ক্রম</th><th style="width:48%">পণ্যের বিবরণ</th><th style="width:12%">পরিমাণ</th><th style="width:15%">দাম (৳)</th><th style="width:18%">মোট (৳)</th></tr></thead>
         <tbody>${itemsHtml}</tbody>
-    </table>
+    追赶
     <table class="totals-table">
-        <tr><td style="width:70%">সাব-টোটাল</td><td class="text-right">${subtotal.toFixed(2)} ৳</td></tr>
-        <tr><td style="color:#b91c1c;">ডিসকাউন্ট</td><td class="text-right" style="color:#b91c1c;">- ${data.discount} ৳</td></tr>
-        <tr><td>ভ্যাট / ট্যাক্স (${data.tax}%)</td><td class="text-right">+ ${taxAmount.toFixed(2)} ৳</td></tr>
-        <tr style="background:#eef2fa;"><td style="font-weight:800; font-size:18px;">মোট প্রদেয়</td><td class="text-right" style="font-weight:800; font-size:22px; color:#1e4a76;">${finalTotal.toFixed(2)} ৳</td></tr>
-    </table>
-    <div class="payment-status">
-        <span><strong>পরিশোধ অবস্থা:</strong> ${data.paymentStatus}</span>
-        <span><strong>পেমেন্ট মাধ্যম:</strong> ${data.paymentMethod}</span>
-    </div>
+        <tr><td style="width:70%">সাব-টোটাল<\/td><td class="text-right">${subtotal.toFixed(2)} ৳<\/td><\/tr>
+        <tr><td style="color:#b91c1c;">ডিসকাউন্ট<\/td><td class="text-right" style="color:#b91c1c;">- ${data.discount} ৳<\/td><\/tr>
+        <tr><td>ভ্যাট / ট্যাক্স (${data.tax}%)<\/td><td class="text-right">+ ${taxAmount.toFixed(2)} ৳<\/td><\/tr>
+        <tr style="background:#eef2fa;"><td style="font-weight:800; font-size:18px;">মোট প্রদেয়<\/td><td class="text-right" style="font-weight:800; font-size:22px; color:#1e4a76;">${finalTotal.toFixed(2)} ৳<\/td><\/tr>
+    <\/table>
+    <div class="payment-status"><span><strong>পরিশোধ অবস্থা:</strong> ${data.paymentStatus}</span><span><strong>পেমেন্ট মাধ্যম:</strong> ${data.paymentMethod}</span></div>
     ${data.remark ? `<div class="remark-box"><strong>নোট:</strong> ${escapeHtml(data.remark)}</div>` : ''}
     <div class="footer">
         <div class="footer-flex">
-            <div class="receiver-signature">
-                <strong>প্রাপকের স্বাক্ষর</strong>
-                <div class="sign-line">____________________</div>
-                <small>(রিসিভ করলো)</small>
-            </div>
-            <div class="qr-code">
-                <canvas id="${qrId}" width="95" height="95"></canvas>
-                <div><small>ভেরিফিকেশন কোড</small></div>
-            </div>
-            <div class="stamp-area">
-                <div class="stamp-group">
-                    <div class="stamp-item"><img src="data:image/svg+xml,${encodeURIComponent(sealSvg)}" alt="সিল"><small>সিল</small></div>
-                    <div class="stamp-item"><img src="data:image/svg+xml,${encodeURIComponent(signSvg)}" alt="স্বাক্ষর"><small>স্বাক্ষর</small></div>
-                </div>
-                <small>তারিখ: ${printDate}</small>
-            </div>
+            <div class="receiver-signature"><strong>প্রাপকের স্বাক্ষর</strong><div class="sign-line">____________________</div><small>(রিসিভ করলো)</small></div>
+            <div class="qr-code"><canvas id="${qrId}" width="95" height="95"></canvas><div><small>ভেরিফিকেশন কোড</small></div></div>
+            <div class="stamp-area"><div class="stamp-group"><div class="stamp-item"><img src="data:image/svg+xml,${encodeURIComponent(sealSvg)}" alt="সিল"><small>সিল</small></div><div class="stamp-item"><img src="data:image/svg+xml,${encodeURIComponent(signSvg)}" alt="স্বাক্ষর"><small>স্বাক্ষর</small></div></div><small>তারিখ: ${printDate}</small></div>
         </div>
         <div class="footer-note">${company.web} | হটলাইন: ${company.phone} | ধন্যবাদান্তে</div>
     </div>
 </div>
-<script src="https://cdn.jsdelivr.net/npm/qrious/dist/qrious.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrious/dist/qrious.min.js"><\/script>
 <script>
     (function() {
         var canvas = document.getElementById('${qrId}');
         if(canvas) {
-            var sub = ${subtotal}, disc = ${data.discount}, tax = ${data.tax};
-            var after = sub - disc, taxAmt = after * tax / 100, total = after + taxAmt;
+            var sub = ${subtotal};
+            var disc = ${data.discount};
+            var tax = ${data.tax};
+            var after = sub - disc;
+            var taxAmt = after * tax / 100;
+            var total = after + taxAmt;
             var qrValue = '${data.shopName} | ${data.invoiceNo} | ${data.date} | Total: ' + total.toFixed(2) + ' BDT';
             new QRious({ element: canvas, size: 95, value: qrValue, foreground: "#1e4a76" });
         }
     })();
-</script>
-</body></html>`;
+<\/script>
+</body>
+</html>`;
 }
 
-// Print function
+// ========== প্রিন্ট ফাংশন - মোবাইলে সঠিকভাবে কাজ করবে, অটো ক্লোজ নেই ==========
 async function printInvoice(data) {
-    showLoader("চালান প্রস্তুত হচ্ছে...");
+    showLoader("চালান প্রস্তুত হচ্ছে, নতুন ট্যাবে খোলা হচ্ছে...");
+    
     const printWindow = window.open('', '_blank');
-    if (!printWindow) { alert("পপ-আপ ব্লকার সক্রিয়!"); hideLoader(); return; }
-    printWindow.document.write(generateInvoiceHTML(data));
+    if (!printWindow) {
+        alert("পপ-আপ ব্লকার সক্রিয়! দয়া করে অনুমতি দিন।");
+        hideLoader();
+        return;
+    }
+    
+    const html = generateInvoiceHTML(data);
+    printWindow.document.write(html);
     printWindow.document.close();
+    
+    // মোবাইলে print() কাজ করার জন্য পর্যাপ্ত সময় দিন
     printWindow.onload = function() {
         setTimeout(() => {
             printWindow.focus();
             printWindow.print();
-            printWindow.onafterprint = () => { setTimeout(() => { printWindow.close(); hideLoader(); }, 500); };
-        }, 1000);
+            // অটো ক্লোজ নেই - ব্যবহারকারী নিজে ট্যাব বন্ধ করবেন
+            hideLoader();
+        }, 1500);
     };
 }
 
-// Download PDF function
+// ========== PDF ডাউনলোড ==========
 async function downloadInvoicePDF(data) {
     showLoader("PDF তৈরি হচ্ছে, দয়া করে অপেক্ষা করুন...");
+    
     const container = document.createElement('div');
     container.style.cssText = 'position:absolute;top:-9999px;left:-9999px;width:210mm;background:white;';
     document.body.appendChild(container);
     container.innerHTML = generateInvoiceHTML(data);
+    
     await new Promise(r => setTimeout(r, 2000));
-    const opt = { margin: [0.45, 0.4, 0.45, 0.4], filename: `Invoice_${data.shopName}_${data.invoiceNo}.pdf`, image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2.8, backgroundColor: '#ffffff' }, jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' } };
-    html2pdf().set(opt).from(container).save().then(() => { document.body.removeChild(container); hideLoader(); }).catch(() => { document.body.removeChild(container); hideLoader(); alert("PDF তৈরি ব্যর্থ!"); });
+    
+    const opt = {
+        margin: [0.45, 0.4, 0.45, 0.4],
+        filename: `Invoice_${data.shopName}_${data.invoiceNo}.pdf`,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2.8, backgroundColor: '#ffffff' },
+        jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
+    };
+    
+    try {
+        await html2pdf().set(opt).from(container).save();
+        document.body.removeChild(container);
+        hideLoader();
+    } catch (err) {
+        console.error('PDF Error:', err);
+        document.body.removeChild(container);
+        hideLoader();
+        alert("PDF তৈরি ব্যর্থ! আবার চেষ্টা করুন।");
+    }
 }
 
-// Save Invoice
+// ========== সেভ ইনভয়েস ==========
 saveInvoiceBtn.addEventListener('click', () => {
     const shopName = shopNameInput.value.trim();
-    if (!shopName) { alert("দোকানের নাম লিখুন!"); return; }
+    if (!shopName) {
+        alert("দোকানের নাম লিখুন!");
+        return;
+    }
+    
     const items = [];
     let hasValid = false;
     document.querySelectorAll('.product-row').forEach(row => {
@@ -347,51 +377,87 @@ saveInvoiceBtn.addEventListener('click', () => {
             items.push({ name, qty, price, total: qty * price });
         }
     });
-    if (!hasValid || items.length === 0) { alert("কমপক্ষে একটি পণ্য যোগ করুন!"); return; }
+    
+    if (!hasValid || items.length === 0) {
+        alert("কমপক্ষে একটি পণ্য যোগ করুন!");
+        return;
+    }
+    
     const discount = parseFloat(discountEl.value) || 0;
     const taxPercent = parseFloat(taxEl.value) || 0;
-    let subtotal = 0; items.forEach(i => subtotal += i.total);
+    let subtotal = 0;
+    items.forEach(i => subtotal += i.total);
     let afterDiscount = subtotal - discount;
     let grandTotal = afterDiscount + (afterDiscount * taxPercent / 100);
+    
     const now = new Date();
     const bdTime = new Date(now.toLocaleString("en-US", { timeZone: "Asia/Dhaka" }));
     const dateKey = bdTime.toISOString().split('T')[0];
     const timeKey = bdTime.toTimeString().split(' ')[0].replace(/:/g, '-');
+    
     const invoiceData = {
-        shopName, invoiceNo: invoiceNoEl.value.trim(), customerName: customerName.value.trim(),
-        customerMobile: customerMobile.value.trim(), customerAddress: customerAddress.value.trim(),
-        items, grandTotal: parseFloat(grandTotal.toFixed(2)), discount, tax: taxPercent,
-        remark: remarkEl.value.trim(), paymentStatus: paymentStatus.value, paymentMethod: paymentMethod.value,
-        date: dateKey, time: timeKey, updatedAt: Date.now()
+        shopName: shopName,
+        invoiceNo: invoiceNoEl.value.trim(),
+        customerName: customerName.value.trim(),
+        customerMobile: customerMobile.value.trim(),
+        customerAddress: customerAddress.value.trim(),
+        items: items,
+        grandTotal: parseFloat(grandTotal.toFixed(2)),
+        discount: discount,
+        tax: taxPercent,
+        remark: remarkEl.value.trim(),
+        paymentStatus: paymentStatus.value,
+        paymentMethod: paymentMethod.value,
+        date: dateKey,
+        time: timeKey,
+        updatedAt: Date.now()
     };
+    
     const newRef = db.ref(`invoices/${shopName}/${dateKey}/${timeKey}`);
     newRef.set(invoiceData, async (err) => {
-        if (err) alert("সেভ ব্যর্থ!");
-        else {
+        if (err) {
+            alert("সেভ ব্যর্থ! ইন্টারনেট চেক করুন।");
+        } else {
             alert("✅ ইনভয়েস সংরক্ষিত হয়েছে!");
             await printInvoice(invoiceData);
             db.ref('invoiceCounter').set(invoiceCounter);
             invoiceCounter++;
             invoiceNoEl.value = 'INV-' + String(invoiceCounter).padStart(5, '0');
             loadInvoices();
+            
             document.querySelectorAll('.product-row').forEach((r, i) => { if (i > 0) r.remove(); });
             document.querySelector('.product-row').querySelectorAll('input').forEach(i => i.value = '');
-            discountEl.value = ''; taxEl.value = ''; remarkEl.value = '';
-            paymentStatus.value = 'ফুল পেইড'; paymentMethod.value = 'বিকাশ';
+            discountEl.value = '';
+            taxEl.value = '';
+            remarkEl.value = '';
+            paymentStatus.value = 'ফুল পেইড';
+            paymentMethod.value = 'বিকাশ';
             calculateGrandTotal();
         }
     });
 });
 
-// Load Invoices
+// ========== লোড ইনভয়েস ==========
 function loadInvoices() {
     invoiceListDiv.innerHTML = '<div class="text-center py-4"><i class="fas fa-spinner fa-spin"></i> লোড হচ্ছে...</div>';
     db.ref('invoices').once('value', (snapshot) => {
         invoiceListDiv.innerHTML = '';
-        if (!snapshot.exists()) { invoiceListDiv.innerHTML = '<div class="alert alert-info text-center">কোনো ইনভয়েস নেই</div>'; return; }
+        if (!snapshot.exists()) {
+            invoiceListDiv.innerHTML = '<div class="alert alert-info text-center">কোনো ইনভয়েস নেই</div>';
+            return;
+        }
+        
         const invoices = [];
-        snapshot.forEach(shopSnap => { shopSnap.forEach(dateSnap => { dateSnap.forEach(timeSnap => { invoices.push({ shop: shopSnap.key, date: dateSnap.key, time: timeSnap.key, data: timeSnap.val() }); }); }); });
+        snapshot.forEach(shopSnap => {
+            shopSnap.forEach(dateSnap => {
+                dateSnap.forEach(timeSnap => {
+                    invoices.push({ shop: shopSnap.key, date: dateSnap.key, time: timeSnap.key, data: timeSnap.val() });
+                });
+            });
+        });
+        
         invoices.sort((a, b) => (b.data.updatedAt || 0) - (a.data.updatedAt || 0));
+        
         invoices.forEach(({ shop, date, time, data }) => {
             const card = document.createElement('div');
             card.className = 'invoice-card';
@@ -407,13 +473,24 @@ function loadInvoices() {
                 </div>
             `;
             invoiceListDiv.appendChild(card);
+            
             card.querySelector('.printBtn').onclick = () => printInvoice(data);
             card.querySelector('.downloadBtn').onclick = () => downloadInvoicePDF(data);
-            card.querySelector('.deleteBtn').onclick = () => { if (confirm("ইনভয়েস মুছে ফেলবেন?")) db.ref(`invoices/${shop}/${date}/${time}`).remove().then(() => loadInvoices()); };
+            card.querySelector('.deleteBtn').onclick = () => {
+                if (confirm("ইনভয়েস মুছে ফেলবেন?")) db.ref(`invoices/${shop}/${date}/${time}`).remove().then(() => loadInvoices());
+            };
             card.querySelector('.editBtn').onclick = () => {
-                shopNameInput.value = data.shopName; customerName.value = data.customerName || ''; customerMobile.value = data.customerMobile || ''; customerAddress.value = data.customerAddress || '';
-                invoiceNoEl.value = data.invoiceNo; discountEl.value = data.discount; taxEl.value = data.tax; remarkEl.value = data.remark || '';
-                paymentStatus.value = data.paymentStatus; paymentMethod.value = data.paymentMethod;
+                shopNameInput.value = data.shopName;
+                customerName.value = data.customerName || '';
+                customerMobile.value = data.customerMobile || '';
+                customerAddress.value = data.customerAddress || '';
+                invoiceNoEl.value = data.invoiceNo;
+                discountEl.value = data.discount;
+                taxEl.value = data.tax;
+                remarkEl.value = data.remark || '';
+                paymentStatus.value = data.paymentStatus;
+                paymentMethod.value = data.paymentMethod;
+                
                 document.querySelectorAll('.product-row').forEach((r, i) => { if (i > 0) r.remove(); });
                 const firstRow = document.querySelector('.product-row');
                 firstRow.querySelectorAll('input').forEach(i => i.value = '');
@@ -436,30 +513,50 @@ function loadInvoices() {
                 });
                 attachRemoveListeners();
                 calculateGrandTotal();
+                
                 const oldRef = db.ref(`invoices/${shop}/${date}/${time}`);
                 const originalHandler = saveInvoiceBtn.onclick;
                 saveInvoiceBtn.onclick = async () => {
                     await oldRef.remove();
                     const newShop = shopNameInput.value.trim();
                     if (!newShop) { alert("দোকানের নাম দিন!"); saveInvoiceBtn.onclick = originalHandler; return; }
+                    
                     const newItems = [];
-                    document.querySelectorAll('.product-row').forEach(r => { const n = r.querySelector('.productName').value.trim(); const q = parseFloat(r.querySelector('.productQty').value); const p = parseFloat(r.querySelector('.productPrice').value); if (n && !isNaN(q) && q > 0 && !isNaN(p) && p > 0) newItems.push({ name: n, qty: q, price: p, total: q * p }); });
+                    document.querySelectorAll('.product-row').forEach(r => {
+                        const n = r.querySelector('.productName').value.trim();
+                        const q = parseFloat(r.querySelector('.productQty').value);
+                        const p = parseFloat(r.querySelector('.productPrice').value);
+                        if (n && !isNaN(q) && q > 0 && !isNaN(p) && p > 0) newItems.push({ name: n, qty: q, price: p, total: q * p });
+                    });
                     if (newItems.length === 0) { alert("পণ্য দিন!"); return; }
-                    const ndisc = parseFloat(discountEl.value) || 0, ntax = parseFloat(taxEl.value) || 0;
+                    
+                    const ndisc = parseFloat(discountEl.value) || 0;
+                    const ntax = parseFloat(taxEl.value) || 0;
                     let s = 0; newItems.forEach(i => s += i.total);
                     let a = s - ndisc;
                     let ng = a + (a * ntax / 100);
                     const nowE = new Date(), bdE = new Date(nowE.toLocaleString("en-US", { timeZone: "Asia/Dhaka" }));
                     const ndt = bdE.toISOString().split('T')[0], ntm = bdE.toTimeString().split(' ')[0].replace(/:/g, '-');
                     const updatedData = {
-                        shopName: newShop, invoiceNo: invoiceNoEl.value.trim(), customerName: customerName.value.trim(),
-                        customerMobile: customerMobile.value.trim(), customerAddress: customerAddress.value.trim(), items: newItems,
-                        grandTotal: parseFloat(ng.toFixed(2)), discount: ndisc, tax: ntax, remark: remarkEl.value.trim(),
-                        paymentStatus: paymentStatus.value, paymentMethod: paymentMethod.value, date: ndt, time: ntm, updatedAt: Date.now()
+                        shopName: newShop, invoiceNo: invoiceNoEl.value.trim(),
+                        customerName: customerName.value.trim(), customerMobile: customerMobile.value.trim(),
+                        customerAddress: customerAddress.value.trim(), items: newItems,
+                        grandTotal: parseFloat(ng.toFixed(2)), discount: ndisc, tax: ntax,
+                        remark: remarkEl.value.trim(), paymentStatus: paymentStatus.value,
+                        paymentMethod: paymentMethod.value, date: ndt, time: ntm, updatedAt: Date.now()
                     };
                     db.ref(`invoices/${newShop}/${ndt}/${ntm}`).set(updatedData, err => {
                         if (err) alert("এডিট ব্যর্থ!");
-                        else { alert("এডিট সম্পূর্ণ!"); saveInvoiceBtn.onclick = originalHandler; loadInvoices(); document.querySelectorAll('.product-row').forEach((r, i) => { if (i > 0) r.remove(); }); document.querySelector('.product-row').querySelectorAll('input').forEach(i => i.value = ''); discountEl.value = ''; taxEl.value = ''; remarkEl.value = ''; paymentStatus.value = 'ফুল পেইড'; paymentMethod.value = 'বিকাশ'; calculateGrandTotal(); }
+                        else {
+                            alert("এডিট সম্পূর্ণ!");
+                            saveInvoiceBtn.onclick = originalHandler;
+                            loadInvoices();
+                            document.querySelectorAll('.product-row').forEach((r, i) => { if (i > 0) r.remove(); });
+                            document.querySelector('.product-row').querySelectorAll('input').forEach(i => i.value = '');
+                            discountEl.value = ''; taxEl.value = ''; remarkEl.value = '';
+                            paymentStatus.value = 'ফুল পেইড'; paymentMethod.value = 'বিকাশ';
+                            calculateGrandTotal();
+                        }
                     });
                 };
                 alert("এডিট মোড: পরিবর্তন করে 'সংরক্ষণ ও প্রিন্ট' চাপুন।");
@@ -467,4 +564,6 @@ function loadInvoices() {
         });
     });
 }
+
+// Initial load
 loadInvoices();
