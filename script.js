@@ -189,7 +189,7 @@ function generateInvoiceHTML(data) {
 <html>
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>${data.shopName} - Invoice ${data.invoiceNo}</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -261,15 +261,15 @@ function generateInvoiceHTML(data) {
         </div>
     </div>
     <table class="items-table">
-        <thead></table><th style="width:7%">ক্রম</th><th style="width:48%">পণ্যের বিবরণ</th><th style="width:12%">পরিমাণ</th><th style="width:15%">দাম (৳)</th><th style="width:18%">মোট (৳)</th></tr></thead>
+        <thead> <tr><th style="width:7%">ক্রম</th><th style="width:48%">পণ্যের বিবরণ</th><th style="width:12%">পরিমাণ</th><th style="width:15%">দাম (৳)</th><th style="width:18%">মোট (৳)</th></tr> </thead>
         <tbody>${itemsHtml}</tbody>
-    追赶
+     </table>
     <table class="totals-table">
-        <tr><td style="width:70%">সাব-টোটাল<\/td><td class="text-right">${subtotal.toFixed(2)} ৳<\/td><\/tr>
-        <tr><td style="color:#b91c1c;">ডিসকাউন্ট<\/td><td class="text-right" style="color:#b91c1c;">- ${data.discount} ৳<\/td><\/tr>
-        <tr><td>ভ্যাট / ট্যাক্স (${data.tax}%)<\/td><td class="text-right">+ ${taxAmount.toFixed(2)} ৳<\/td><\/tr>
-        <tr style="background:#eef2fa;"><td style="font-weight:800; font-size:18px;">মোট প্রদেয়<\/td><td class="text-right" style="font-weight:800; font-size:22px; color:#1e4a76;">${finalTotal.toFixed(2)} ৳<\/td><\/tr>
-    <\/table>
+        <tr><td style="width:70%">সাব-টোটাল</td><td class="text-right">${subtotal.toFixed(2)} ৳</td></tr>
+        <tr><td style="color:#b91c1c;">ডিসকাউন্ট</td><td class="text-right" style="color:#b91c1c;">- ${data.discount} ৳</td></tr>
+        <tr><td>ভ্যাট / ট্যাক্স (${data.tax}%)</td><td class="text-right">+ ${taxAmount.toFixed(2)} ৳</td></tr>
+        <tr style="background:#eef2fa;"><td style="font-weight:800; font-size:18px;">মোট প্রদেয়</td><td class="text-right" style="font-weight:800; font-size:22px; color:#1e4a76;">${finalTotal.toFixed(2)} ৳</td></tr>
+    </table>
     <div class="payment-status"><span><strong>পরিশোধ অবস্থা:</strong> ${data.paymentStatus}</span><span><strong>পেমেন্ট মাধ্যম:</strong> ${data.paymentMethod}</span></div>
     ${data.remark ? `<div class="remark-box"><strong>নোট:</strong> ${escapeHtml(data.remark)}</div>` : ''}
     <div class="footer">
@@ -301,30 +301,34 @@ function generateInvoiceHTML(data) {
 </html>`;
 }
 
-// ========== প্রিন্ট ফাংশন - মোবাইলে সঠিকভাবে কাজ করবে, অটো ক্লোজ নেই ==========
+// ========== উন্নত প্রিন্ট ফাংশন - সকল ডিভাইসে কাজ করবে ==========
 async function printInvoice(data) {
-    showLoader("চালান প্রস্তুত হচ্ছে, নতুন ট্যাবে খোলা হচ্ছে...");
+    showLoader("চালান প্রস্তুত হচ্ছে...");
     
+    const html = generateInvoiceHTML(data);
+    
+    // মোবাইল ডিভাইস চেক
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    
+    // সকল ডিভাইসের জন্য নতুন ট্যাব পদ্ধতি ব্যবহার করুন
     const printWindow = window.open('', '_blank');
+    
     if (!printWindow) {
-        alert("পপ-আপ ব্লকার সক্রিয়! দয়া করে অনুমতি দিন।");
+        alert("পপ-আপ ব্লকার সক্রিয়! দয়া করে ব্রাউজার সেটিংসে পপ-আপ অনুমতি দিন।");
         hideLoader();
         return;
     }
     
-    const html = generateInvoiceHTML(data);
     printWindow.document.write(html);
     printWindow.document.close();
     
-    // মোবাইলে print() কাজ করার জন্য পর্যাপ্ত সময় দিন
-    printWindow.onload = function() {
-        setTimeout(() => {
-            printWindow.focus();
-            printWindow.print();
-            // অটো ক্লোজ নেই - ব্যবহারকারী নিজে ট্যাব বন্ধ করবেন
-            hideLoader();
-        }, 1500);
-    };
+    // প্রিন্ট ডায়ালগ খোলার জন্য পর্যাপ্ত সময় দিন
+    setTimeout(() => {
+        printWindow.focus();
+        printWindow.print();
+        hideLoader();
+        // ট্যাব খোলা থাকবে - ব্যবহারকারী নিজে বন্ধ করবেন
+    }, 1500);
 }
 
 // ========== PDF ডাউনলোড ==========
