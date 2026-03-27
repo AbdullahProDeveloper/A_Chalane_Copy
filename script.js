@@ -179,7 +179,7 @@ const signSvgSmall = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 6
     <text x="70" y="55" fill="#2c5f8a" font-size="9" font-style="italic">Authorized</text>
 </svg>`;
 
-// Generate Print Invoice HTML (Responsive for all devices)
+// Generate Print Invoice HTML (Mobile-optimized with working print)
 function generatePrintInvoiceHTML(data) {
     const company = {
         name: "Abdullah Enterprise",
@@ -244,8 +244,8 @@ function generatePrintInvoiceHTML(data) {
         }
         @media (max-width: 768px) {
             body {
-                padding: 10px;
-                font-size: 12px;
+                padding: 12px;
+                font-size: 13px;
             }
             .header {
                 flex-direction: column;
@@ -267,6 +267,14 @@ function generatePrintInvoiceHTML(data) {
             }
             .stamp-group {
                 justify-content: center;
+            }
+            table {
+                display: block;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+            th, td {
+                white-space: nowrap;
             }
         }
         .invoice-container {
@@ -547,6 +555,16 @@ function generatePrintInvoiceHTML(data) {
             var qrValue = '${data.shopName} | ${data.invoiceNo} | ${data.date} | Total: ' + total.toFixed(2) + ' BDT';
             new QRious({ element: canvas, size: 80, value: qrValue, foreground: "#1e4a76" });
         }
+        
+        // Auto trigger print for mobile after page loads
+        if (window.location.search === '?print' || /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+            setTimeout(function() {
+                window.print();
+                window.onafterprint = function() {
+                    window.close();
+                };
+            }, 800);
+        }
     })();
 </script>
 </body>
@@ -642,6 +660,11 @@ function generatePDFInvoiceHTML(data) {
             .totals-table {
                 width: 100%;
                 max-width: 100%;
+            }
+            table {
+                display: block;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
             }
         }
         .invoice-container {
@@ -953,59 +976,50 @@ function generatePDFInvoiceHTML(data) {
 </html>`;
 }
 
-// ========== প্রিন্ট ফাংশন (Mobile-optimized) ==========
+// ========== প্রিন্ট ফাংশন (Fixed for mobile) ==========
 async function printInvoice(data) {
     showLoader("চালান প্রস্তুত হচ্ছে...");
     
     const html = generatePrintInvoiceHTML(data);
     
-    // Check if mobile device
-    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    // Create a new window for printing
+    const printWindow = window.open('', '_blank');
     
-    if (isMobile) {
-        // For mobile: Create a new window and trigger print
-        const printWindow = window.open('', '_blank');
-        if (!printWindow) {
-            alert("পপ-আপ ব্লকার সক্রিয়! দয়া করে ব্রাউজার সেটিংসে পপ-আপ অনুমতি দিন।");
-            hideLoader();
-            return;
-        }
-        
-        printWindow.document.write(html);
-        printWindow.document.close();
-        
-        setTimeout(() => {
-            printWindow.focus();
-            printWindow.print();
-            hideLoader();
-            printWindow.onafterprint = () => {
-                printWindow.close();
-            };
-        }, 800);
-    } else {
-        // For desktop: Create new window and print
-        const printWindow = window.open('', '_blank');
-        if (!printWindow) {
-            alert("পপ-আপ ব্লকার সক্রিয়! দয়া করে ব্রাউজার সেটিংসে পপ-আপ অনুমতি দিন।");
-            hideLoader();
-            return;
-        }
-        
-        printWindow.document.write(html);
-        printWindow.document.close();
-        
-        setTimeout(() => {
-            printWindow.focus();
-            printWindow.print();
-            hideLoader();
-            printWindow.onafterprint = () => {
-                printWindow.close();
-            };
-            setTimeout(() => {
-                if (!printWindow.closed) printWindow.close();
-            }, 10000);
-        }, 800);
+    if (!printWindow) {
+        alert("পপ-আপ ব্লকার সক্রিয়! দয়া করে ব্রাউজার সেটিংসে পপ-আপ অনুমতি দিন।");
+        hideLoader();
+        return;
     }
+    
+    printWindow.document.write(html);
+    printWindow.document.close();
+    
+    // Wait for content to load then trigger print
+    setTimeout(() => {
+        printWindow.focus();
+        
+        // For mobile devices, ensure print dialog appears
+        if (/Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+            // Add a small delay for mobile
+            setTimeout(() => {
+                printWindow.print();
+                hideLoader();
+            }, 500);
+        } else {
+            printWindow.print();
+            hideLoader();
+        }
+        
+        // Close window after print
+        printWindow.onafterprint = () => {
+            printWindow.close();
+        };
+        
+        // Fallback close after 15 seconds
+        setTimeout(() => {
+            if (!printWindow.closed) printWindow.close();
+        }, 15000);
+    }, 1000);
 }
 
 // ========== PDF ডাউনলোড (Mobile-optimized with direct download) ==========
@@ -1017,27 +1031,23 @@ async function downloadInvoicePDF(data) {
         const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
         
         if (isMobile) {
-            // For mobile: Create iframe for better compatibility
-            const iframe = document.createElement('iframe');
-            iframe.style.position = 'absolute';
-            iframe.style.width = '0';
-            iframe.style.height = '0';
-            iframe.style.border = 'none';
-            iframe.style.visibility = 'hidden';
-            document.body.appendChild(iframe);
+            // For mobile: Create a new window with PDF design
+            const pdfWindow = window.open('', '_blank');
+            
+            if (!pdfWindow) {
+                alert("পপ-আপ ব্লকার সক্রিয়! দয়া করে অনুমতি দিন।");
+                hideLoader();
+                return false;
+            }
             
             const html = generatePDFInvoiceHTML(data);
-            iframe.contentDocument.open();
-            iframe.contentDocument.write(html);
-            iframe.contentDocument.close();
+            pdfWindow.document.write(html);
+            pdfWindow.document.close();
             
-            // PDF will auto-download via html2pdf
+            // PDF will auto-download via html2pdf in the new window
             setTimeout(() => {
-                setTimeout(() => {
-                    document.body.removeChild(iframe);
-                    hideLoader();
-                }, 3000);
-            }, 2000);
+                hideLoader();
+            }, 1500);
         } else {
             // For desktop: Open new window with PDF-optimized design
             const pdfWindow = window.open('', '_blank');
@@ -1052,7 +1062,6 @@ async function downloadInvoicePDF(data) {
             pdfWindow.document.write(html);
             pdfWindow.document.close();
             
-            // PDF will auto-download via html2pdf in the new window
             setTimeout(() => {
                 hideLoader();
             }, 1500);
@@ -1276,5 +1285,3 @@ function loadInvoices() {
 
 // Initial load
 loadInvoices();
-
-
