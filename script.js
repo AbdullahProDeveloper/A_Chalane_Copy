@@ -142,24 +142,8 @@ const companyLogo = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 10
     <text x="50" y="85" text-anchor="middle" fill="#e2e8f0" font-size="9">ENTERPRISE</text>
 </svg>`;
 
-const companyLogoSmall = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="55" height="55">
-    <circle cx="50" cy="50" r="45" fill="url(#grad)" stroke="#d4af37" stroke-width="2.5"/>
-    <defs><linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" stop-color="#1e3c72"/><stop offset="100%" stop-color="#2a5298"/>
-    </linearGradient></defs>
-    <text x="50" y="67" text-anchor="middle" fill="#d4af37" font-size="32" font-weight="bold">A</text>
-    <text x="50" y="85" text-anchor="middle" fill="#e2e8f0" font-size="9">ENTERPRISE</text>
-</svg>`;
-
 // Seal SVG
 const sealSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="65" height="65">
-    <circle cx="50" cy="50" r="45" fill="none" stroke="#b87333" stroke-width="2.5"/>
-    <circle cx="50" cy="50" r="38" fill="none" stroke="#b87333" stroke-width="1.5"/>
-    <text x="50" y="58" text-anchor="middle" fill="#b87333" font-size="12" font-weight="bold">সিল</text>
-    <text x="50" y="72" text-anchor="middle" fill="#b87333" font-size="8">ESTABLISHED</text>
-</svg>`;
-
-const sealSvgSmall = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="45" height="45">
     <circle cx="50" cy="50" r="45" fill="none" stroke="#b87333" stroke-width="2.5"/>
     <circle cx="50" cy="50" r="38" fill="none" stroke="#b87333" stroke-width="1.5"/>
     <text x="50" y="58" text-anchor="middle" fill="#b87333" font-size="12" font-weight="bold">সিল</text>
@@ -173,13 +157,7 @@ const signSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 60" wi
     <text x="70" y="55" fill="#2c5f8a" font-size="9" font-style="italic">Authorized</text>
 </svg>`;
 
-const signSvgSmall = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 60" width="60" height="45">
-    <path d="M10,35 C25,25 35,30 45,32 C55,34 65,28 75,30 C85,32 95,38 105,36" stroke="#2c5f8a" fill="none" stroke-width="2.2"/>
-    <path d="M15,45 L30,42 L45,44 L60,40 L75,42 L90,38 L105,40" stroke="#2c5f8a" fill="none" stroke-width="1.5"/>
-    <text x="70" y="55" fill="#2c5f8a" font-size="9" font-style="italic">Authorized</text>
-</svg>`;
-
-// Generate Print Invoice HTML (with auto-print on load)
+// Generate Professional Invoice HTML for Print
 function generatePrintInvoiceHTML(data) {
     const company = {
         name: "Abdullah Enterprise",
@@ -199,11 +177,11 @@ function generatePrintInvoiceHTML(data) {
     
     const itemsHtml = data.items.map((item, idx) => `
         <tr>
-            <td style="padding: 10px 8px; border: 1px solid #e2e8f0; text-align:center;">${idx + 1}</td>
-            <td style="padding: 10px 8px; border: 1px solid #e2e8f0;">${escapeHtml(item.name)}</td>
-            <td style="padding: 10px 8px; border: 1px solid #e2e8f0; text-align:center;">${item.qty}</td>
-            <td style="padding: 10px 8px; border: 1px solid #e2e8f0; text-align:right;">${item.price.toFixed(2)}</td>
-            <td style="padding: 10px 8px; border: 1px solid #e2e8f0; text-align:right; font-weight:600;">${item.total.toFixed(2)}</td>
+            <td style="padding: 12px 10px; border: 1px solid #e2e8f0; text-align:center;">${idx + 1}</td>
+            <td style="padding: 12px 10px; border: 1px solid #e2e8f0;">${escapeHtml(item.name)}</td>
+            <td style="padding: 12px 10px; border: 1px solid #e2e8f0; text-align:center;">${item.qty}</td>
+            <td style="padding: 12px 10px; border: 1px solid #e2e8f0; text-align:right;">${item.price.toFixed(2)}</td>
+            <td style="padding: 12px 10px; border: 1px solid #e2e8f0; text-align:right; font-weight:600;">${item.total.toFixed(2)}</td>
         </tr>
     `).join('');
     
@@ -220,11 +198,11 @@ function generatePrintInvoiceHTML(data) {
             box-sizing: border-box;
         }
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Arial', sans-serif;
-            padding: 15px;
+            font-family: 'Segoe UI', 'Roboto', 'Arial', sans-serif;
+            padding: 0.4in;
             background: white;
-            font-size: 14px;
-            line-height: 1.4;
+            font-size: 13px;
+            line-height: 1.5;
         }
         @media print {
             body {
@@ -238,41 +216,6 @@ function generatePrintInvoiceHTML(data) {
             .no-break {
                 page-break-inside: avoid;
             }
-            button, .no-print {
-                display: none !important;
-            }
-        }
-        @media (max-width: 768px) {
-            body {
-                padding: 12px;
-                font-size: 13px;
-            }
-            .header {
-                flex-direction: column;
-                text-align: center;
-                gap: 10px;
-            }
-            .customer-flex {
-                flex-direction: column;
-            }
-            .invoice-badge {
-                align-self: flex-start;
-            }
-            .footer-flex {
-                flex-direction: column;
-                text-align: center;
-            }
-            .stamp-area {
-                text-align: center;
-            }
-            .stamp-group {
-                justify-content: center;
-            }
-            table {
-                display: block;
-                overflow-x: auto;
-                -webkit-overflow-scrolling: touch;
-            }
         }
         .invoice-container {
             max-width: 100%;
@@ -284,94 +227,91 @@ function generatePrintInvoiceHTML(data) {
             justify-content: space-between;
             align-items: center;
             border-bottom: 3px solid #d4af37;
-            padding-bottom: 15px;
-            margin-bottom: 15px;
-            flex-wrap: wrap;
+            padding-bottom: 18px;
+            margin-bottom: 20px;
         }
         .company-info h1 {
             color: #1e3c72;
-            font-size: 24px;
+            font-size: 28px;
             margin: 0;
         }
         .company-info p {
             color: #4a627a;
-            font-size: 10px;
-            margin-top: 3px;
+            font-size: 11px;
+            margin-top: 5px;
         }
         .contact-row {
             display: flex;
             justify-content: space-between;
             background: #f8fafd;
-            padding: 10px 12px;
-            border-radius: 10px;
-            margin-bottom: 15px;
-            font-size: 10px;
+            padding: 12px 18px;
+            border-radius: 14px;
+            margin-bottom: 20px;
+            font-size: 11px;
             border: 1px solid #e9edf2;
             flex-wrap: wrap;
-            gap: 6px;
+            gap: 8px;
         }
         .customer-section {
             background: #f9fbfd;
-            padding: 12px 15px;
-            border-radius: 12px;
-            margin: 12px 0 15px;
+            padding: 18px 24px;
+            border-radius: 20px;
+            margin: 15px 0 20px;
             border: 1px solid #e9edf2;
         }
         .customer-flex {
             display: flex;
             justify-content: space-between;
             flex-wrap: wrap;
-            gap: 15px;
+            gap: 20px;
         }
         .customer-details {
             flex: 2;
         }
         .customer-details strong {
             color: #1e4a76;
-            font-size: 13px;
+            font-size: 14px;
             display: block;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
             border-left: 3px solid #d4af37;
-            padding-left: 10px;
+            padding-left: 12px;
         }
         .shop-name {
-            font-size: 16px;
+            font-size: 18px;
             font-weight: 700;
             color: #0a2b3e;
-            margin-bottom: 5px;
+            margin-bottom: 6px;
         }
         .invoice-badge {
             background: #1e4a76;
-            padding: 10px 20px;
-            border-radius: 40px;
+            padding: 12px 28px;
+            border-radius: 60px;
             text-align: center;
         }
         .invoice-badge .inv-no {
             color: white;
-            font-size: 16px;
+            font-size: 18px;
             font-weight: 800;
         }
         .invoice-badge .inv-date {
             color: rgba(255,255,255,0.9);
             font-size: 10px;
-            margin-top: 3px;
+            margin-top: 4px;
         }
         table {
             width: 100%;
             border-collapse: collapse;
-            margin: 15px 0;
+            margin: 20px 0;
         }
         th {
             background: #eef2fa;
-            padding: 10px 8px;
+            padding: 12px 10px;
             border: 1px solid #e2e8f0;
             font-weight: 700;
-            font-size: 12px;
         }
         td {
-            padding: 8px 8px;
+            padding: 10px 10px;
             border: 1px solid #e2e8f0;
-            font-size: 12px;
         }
         .text-right {
             text-align: right;
@@ -380,74 +320,67 @@ function generatePrintInvoiceHTML(data) {
             width: 100%;
             max-width: 350px;
             margin-left: auto;
-            margin-top: 12px;
-            margin-bottom: 12px;
+            margin-top: 15px;
+            margin-bottom: 15px;
             border-collapse: collapse;
         }
         .totals-table td {
-            padding: 8px 12px;
+            padding: 10px 16px;
             border: 1px solid #e2e8f0;
-            font-size: 12px;
         }
         .payment-status {
             display: flex;
             justify-content: space-between;
             background: #f1f5f9;
-            padding: 10px 18px;
-            border-radius: 40px;
-            margin: 12px 0;
+            padding: 12px 24px;
+            border-radius: 50px;
+            margin: 15px 0;
             font-size: 12px;
             flex-wrap: wrap;
-            gap: 8px;
+            gap: 10px;
         }
         .remark-box {
             background: #fefce8;
-            padding: 10px 12px;
-            border-radius: 12px;
-            margin-bottom: 15px;
+            padding: 12px 18px;
+            border-radius: 16px;
+            margin-bottom: 18px;
             border-left: 4px solid #eab308;
-            font-size: 11px;
         }
         .footer {
-            margin-top: 20px;
+            margin-top: 25px;
         }
         .footer-flex {
             display: flex;
             justify-content: space-between;
             align-items: center;
             border-top: 2px solid #cbd5e1;
-            padding-top: 18px;
+            padding-top: 22px;
             flex-wrap: wrap;
-            gap: 15px;
+            gap: 20px;
         }
         .receiver-signature .sign-line {
             border-bottom: 1.5px solid #94a3b8;
-            width: 150px;
-            padding-bottom: 4px;
-            margin-top: 4px;
+            width: 160px;
+            padding-bottom: 5px;
+            margin-top: 5px;
         }
         .qr-code {
             text-align: center;
-        }
-        .qr-code canvas {
-            max-width: 80px;
-            height: auto;
         }
         .stamp-area {
             text-align: right;
         }
         .stamp-group {
             display: flex;
-            gap: 12px;
+            gap: 15px;
             justify-content: flex-end;
-            margin-bottom: 6px;
-            flex-wrap: wrap;
+            margin-bottom: 8px;
         }
         .stamp-item {
             text-align: center;
         }
         .stamp-item img {
-            width: 50px;
+            width: 55px;
             height: auto;
         }
         .stamp-item small {
@@ -456,31 +389,11 @@ function generatePrintInvoiceHTML(data) {
         }
         .footer-note {
             text-align: center;
-            margin-top: 15px;
-            font-size: 9px;
+            margin-top: 18px;
+            font-size: 10px;
             color: #6c86a3;
             border-top: 1px solid #e9edf2;
-            padding-top: 10px;
-        }
-        .print-button {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: #1e4a76;
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 50px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-            z-index: 1000;
-        }
-        @media print {
-            .print-button {
-                display: none;
-            }
+            padding-top: 12px;
         }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/qrious/dist/qrious.min.js"></script>
@@ -516,10 +429,10 @@ function generatePrintInvoiceHTML(data) {
         <thead>
             <tr>
                 <th style="width:8%">ক্রম</th>
-                <th style="width:48%">পণ্যের বিবরণ</th>
+                <th style="width:52%">পণ্যের বিবরণ</th>
                 <th style="width:12%">পরিমাণ</th>
-                <th style="width:16%">দাম (৳)</th>
-                <th style="width:16%">মোট (৳)</th>
+                <th style="width:14%">দাম (৳)</th>
+                <th style="width:14%">মোট (৳)</th>
             </tr>
         </thead>
         <tbody>
@@ -530,7 +443,7 @@ function generatePrintInvoiceHTML(data) {
         <tr><td style="width:65%">সাব-টোটাল</td><td class="text-right">${subtotal.toFixed(2)} ৳</td></tr>
         ${data.discount > 0 ? `<tr><td style="color:#b91c1c;">ডিসকাউন্ট</td><td class="text-right" style="color:#b91c1c;">- ${data.discount} ৳</td></tr>` : ''}
         ${data.tax > 0 ? `<tr><td style="color:#1e4a76;">ভ্যাট / ট্যাক্স (${data.tax}%)</td><td class="text-right">+ ${taxAmount.toFixed(2)} ৳</td></tr>` : ''}
-        <tr style="background:#eef2fa;"><td style="font-weight:800; font-size:16px;">মোট প্রদেয়</td><td class="text-right" style="font-weight:800; font-size:18px; color:#1e4a76;">${finalTotal.toFixed(2)} ৳</td></tr>
+        <tr style="background:#eef2fa;"><td style="font-weight:800; font-size:18px;">মোট প্রদেয়</td><td class="text-right" style="font-weight:800; font-size:20px; color:#1e4a76;">${finalTotal.toFixed(2)} ৳</td></tr>
     </table>
     <div class="payment-status no-break">
         <span><strong>পরিশোধ অবস্থা:</strong> ${data.paymentStatus}</span>
@@ -559,7 +472,6 @@ function generatePrintInvoiceHTML(data) {
         <div class="footer-note">${company.web} | হটলাইন: ${company.phone} | ধন্যবাদান্তে</div>
     </div>
 </div>
-<button class="print-button" onclick="window.print()">🖨️ প্রিন্ট করুন</button>
 <script>
     (function() {
         var canvas = document.getElementById('${qrId}');
@@ -573,21 +485,13 @@ function generatePrintInvoiceHTML(data) {
             var qrValue = '${data.shopName} | ${data.invoiceNo} | ${data.date} | Total: ' + total.toFixed(2) + ' BDT';
             new QRious({ element: canvas, size: 80, value: qrValue, foreground: "#1e4a76" });
         }
-        
-        // Auto trigger print on load for mobile
-        var isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-        if(isMobile) {
-            setTimeout(function() {
-                window.print();
-            }, 1000);
-        }
     })();
 </script>
 </body>
 </html>`;
 }
 
-// Generate PDF Invoice HTML (Mobile-optimized with direct download)
+// Generate Professional PDF HTML with Auto Download
 function generatePDFInvoiceHTML(data) {
     const company = {
         name: "Abdullah Enterprise",
@@ -608,11 +512,11 @@ function generatePDFInvoiceHTML(data) {
     
     const itemsHtml = data.items.map((item, idx) => `
         <tr>
-            <td style="padding: 6px 4px; border: 1px solid #ddd; text-align:center; font-size: 10px;">${idx + 1}</td>
-            <td style="padding: 6px 4px; border: 1px solid #ddd; font-size: 10px;">${escapeHtml(item.name)}</td>
-            <td style="padding: 6px 4px; border: 1px solid #ddd; text-align:center; font-size: 10px;">${item.qty}</td>
-            <td style="padding: 6px 4px; border: 1px solid #ddd; text-align:right; font-size: 10px;">${item.price.toFixed(2)}</td>
-            <td style="padding: 6px 4px; border: 1px solid #ddd; text-align:right; font-size: 10px; font-weight:600;">${item.total.toFixed(2)}</td>
+            <td style="padding: 8px 6px; border: 1px solid #ddd; text-align:center;">${idx + 1}</td>
+            <td style="padding: 8px 6px; border: 1px solid #ddd;">${escapeHtml(item.name)}</td>
+            <td style="padding: 8px 6px; border: 1px solid #ddd; text-align:center;">${item.qty}</td>
+            <td style="padding: 8px 6px; border: 1px solid #ddd; text-align:right;">${item.price.toFixed(2)}</td>
+            <td style="padding: 8px 6px; border: 1px solid #ddd; text-align:right; font-weight:600;">${item.total.toFixed(2)}</td>
         </tr>
     `).join('');
     
@@ -620,7 +524,7 @@ function generatePDFInvoiceHTML(data) {
 <html>
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>${data.shopName} - Invoice ${data.invoiceNo}</title>
     <style>
         * {
@@ -629,58 +533,20 @@ function generatePDFInvoiceHTML(data) {
             box-sizing: border-box;
         }
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Arial', sans-serif;
-            padding: 12px;
+            font-family: 'Segoe UI', 'Roboto', 'Arial', sans-serif;
+            padding: 0.2in;
             background: white;
-            font-size: 11px;
-            line-height: 1.3;
+            font-size: 12px;
+            line-height: 1.4;
         }
         @media print {
             body {
-                padding: 0.15in;
+                padding: 0.2in;
                 margin: 0;
             }
             @page {
                 size: A4;
-                margin: 0.15in;
-            }
-            .no-break {
-                page-break-inside: avoid;
-            }
-        }
-        @media (max-width: 768px) {
-            body {
-                padding: 8px;
-            }
-            .header {
-                flex-direction: column;
-                text-align: center;
-                gap: 8px;
-            }
-            .customer-flex {
-                flex-direction: column;
-            }
-            .invoice-badge {
-                align-self: flex-start;
-            }
-            .footer-flex {
-                flex-direction: column;
-                text-align: center;
-            }
-            .stamp-area {
-                text-align: center;
-            }
-            .stamp-group {
-                justify-content: center;
-            }
-            .totals-table {
-                width: 100%;
-                max-width: 100%;
-            }
-            table {
-                display: block;
-                overflow-x: auto;
-                -webkit-overflow-scrolling: touch;
+                margin: 0.2in;
             }
         }
         .invoice-container {
@@ -693,189 +559,173 @@ function generatePDFInvoiceHTML(data) {
             justify-content: space-between;
             align-items: center;
             border-bottom: 2px solid #d4af37;
-            padding-bottom: 8px;
-            margin-bottom: 8px;
-            flex-wrap: wrap;
+            padding-bottom: 12px;
+            margin-bottom: 15px;
         }
         .company-info h1 {
             color: #1e3c72;
-            font-size: 18px;
+            font-size: 22px;
             margin: 0;
         }
         .company-info p {
             color: #4a627a;
-            font-size: 8px;
-            margin-top: 2px;
+            font-size: 9px;
+            margin-top: 3px;
         }
         .contact-row {
             display: flex;
             justify-content: space-between;
             background: #f8fafd;
-            padding: 5px 8px;
-            border-radius: 6px;
-            margin-bottom: 8px;
-            font-size: 8px;
+            padding: 8px 12px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            font-size: 9px;
             border: 1px solid #e9edf2;
             flex-wrap: wrap;
-            gap: 4px;
+            gap: 6px;
         }
         .customer-section {
             background: #f9fbfd;
-            padding: 8px 10px;
-            border-radius: 8px;
-            margin: 8px 0 10px;
+            padding: 12px 18px;
+            border-radius: 12px;
+            margin: 12px 0 15px;
             border: 1px solid #e9edf2;
         }
         .customer-flex {
             display: flex;
             justify-content: space-between;
             flex-wrap: wrap;
-            gap: 10px;
+            gap: 15px;
         }
         .customer-details {
             flex: 2;
         }
         .customer-details strong {
             color: #1e4a76;
-            font-size: 10px;
+            font-size: 12px;
             display: block;
-            margin-bottom: 4px;
+            margin-bottom: 6px;
             border-left: 2px solid #d4af37;
-            padding-left: 6px;
+            padding-left: 8px;
         }
         .shop-name {
-            font-size: 11px;
+            font-size: 14px;
             font-weight: 700;
             color: #0a2b3e;
-            margin-bottom: 3px;
+            margin-bottom: 4px;
         }
         .invoice-badge {
             background: #1e4a76;
-            padding: 5px 12px;
-            border-radius: 25px;
+            padding: 8px 20px;
+            border-radius: 40px;
             text-align: center;
         }
         .invoice-badge .inv-no {
             color: white;
-            font-size: 11px;
+            font-size: 14px;
             font-weight: 800;
         }
         .invoice-badge .inv-date {
             color: rgba(255,255,255,0.9);
-            font-size: 7px;
-            margin-top: 2px;
+            font-size: 9px;
+            margin-top: 3px;
         }
         table {
             width: 100%;
             border-collapse: collapse;
-            margin: 8px 0;
+            margin: 15px 0;
         }
         th {
             background: #eef2fa;
-            padding: 5px 4px;
+            padding: 8px 6px;
             border: 1px solid #ddd;
             font-weight: 700;
-            font-size: 9px;
+            font-size: 11px;
         }
         td {
-            padding: 4px 4px;
+            padding: 6px 6px;
             border: 1px solid #ddd;
-            font-size: 9px;
+            font-size: 11px;
         }
         .text-right {
             text-align: right;
         }
         .totals-table {
             width: 100%;
-            max-width: 280px;
+            max-width: 300px;
             margin-left: auto;
-            margin-top: 8px;
-            margin-bottom: 8px;
+            margin-top: 12px;
+            margin-bottom: 12px;
             border-collapse: collapse;
         }
         .totals-table td {
-            padding: 4px 8px;
+            padding: 6px 12px;
             border: 1px solid #ddd;
-            font-size: 9px;
         }
         .payment-status {
             display: flex;
             justify-content: space-between;
             background: #f1f5f9;
-            padding: 5px 10px;
-            border-radius: 20px;
-            margin: 8px 0;
-            font-size: 9px;
+            padding: 8px 16px;
+            border-radius: 40px;
+            margin: 12px 0;
+            font-size: 11px;
             flex-wrap: wrap;
-            gap: 5px;
+            gap: 8px;
         }
         .remark-box {
             background: #fefce8;
-            padding: 5px 8px;
-            border-radius: 6px;
-            margin-bottom: 8px;
+            padding: 8px 12px;
+            border-radius: 10px;
+            margin-bottom: 12px;
             border-left: 3px solid #eab308;
-            font-size: 8px;
+            font-size: 10px;
         }
         .footer {
-            margin-top: 10px;
+            margin-top: 20px;
         }
         .footer-flex {
             display: flex;
             justify-content: space-between;
             align-items: center;
             border-top: 1px solid #cbd5e1;
-            padding-top: 8px;
+            padding-top: 15px;
             flex-wrap: wrap;
-            gap: 10px;
+            gap: 15px;
         }
         .receiver-signature .sign-line {
             border-bottom: 1px solid #94a3b8;
-            width: 100px;
-            padding-bottom: 2px;
-            margin-top: 2px;
+            width: 130px;
+            padding-bottom: 3px;
+            margin-top: 3px;
         }
-        .receiver-signature strong {
-            font-size: 8px;
-        }
-        .receiver-signature small {
-            font-size: 6px;
-        }
-        .qr-code canvas {
-            width: 50px;
-            height: 50px;
-        }
-        .qr-code div small {
-            font-size: 6px;
+        .qr-code {
+            text-align: center;
         }
         .stamp-area {
             text-align: right;
         }
         .stamp-group {
             display: flex;
-            gap: 6px;
+            gap: 10px;
             justify-content: flex-end;
-            margin-bottom: 3px;
-            flex-wrap: wrap;
+            margin-bottom: 5px;
         }
         .stamp-item img {
-            width: 32px;
+            width: 45px;
             height: auto;
         }
         .stamp-item small {
-            font-size: 5px;
+            font-size: 7px;
             display: block;
-        }
-        .stamp-area small {
-            font-size: 6px;
         }
         .footer-note {
             text-align: center;
-            margin-top: 8px;
-            font-size: 6px;
+            margin-top: 12px;
+            font-size: 9px;
             color: #6c86a3;
             border-top: 1px solid #e9edf2;
-            padding-top: 5px;
+            padding-top: 8px;
         }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/qrious/dist/qrious.min.js"></script>
@@ -888,7 +738,7 @@ function generatePDFInvoiceHTML(data) {
             <h1>${company.name}</h1>
             <p>${company.address}</p>
         </div>
-        <div>${companyLogoSmall}</div>
+        <div>${companyLogo}</div>
     </div>
     <div class="contact-row">
         <div>📞 ${company.phone} &nbsp;| ✉️ ${company.email}</div>
@@ -899,8 +749,8 @@ function generatePDFInvoiceHTML(data) {
             <div class="customer-details">
                 <strong>ক্রেতার তথ্য</strong>
                 <div class="shop-name">${escapeHtml(data.shopName) || '——'}</div>
-                <div style="font-size: 8px;">${escapeHtml(data.customerName) ? '👤 ' + escapeHtml(data.customerName) : ''} ${data.customerMobile ? '📞 ' + escapeHtml(data.customerMobile) : ''}</div>
-                <div style="font-size: 8px;">📍 ${escapeHtml(data.customerAddress) || '——'}</div>
+                <div>${escapeHtml(data.customerName) ? '👤 ' + escapeHtml(data.customerName) : ''} ${data.customerMobile ? '📞 ' + escapeHtml(data.customerMobile) : ''}</div>
+                <div>📍 ${escapeHtml(data.customerAddress) || '——'}</div>
             </div>
             <div class="invoice-badge">
                 <div class="inv-no">${data.invoiceNo}</div>
@@ -908,7 +758,7 @@ function generatePDFInvoiceHTML(data) {
             </div>
         </div>
     </div>
-    <table class="no-break">
+    <table>
         <thead>
             <tr>
                 <th style="width:8%">ক্রম</th>
@@ -922,18 +772,18 @@ function generatePDFInvoiceHTML(data) {
             ${itemsHtml}
         </tbody>
     </table>
-    <table class="totals-table no-break">
+    <table class="totals-table">
         <tr><td style="width:65%">সাব-টোটাল</td><td class="text-right">${subtotal.toFixed(2)} ৳</td></tr>
         ${data.discount > 0 ? `<tr><td style="color:#b91c1c;">ডিসকাউন্ট</td><td class="text-right" style="color:#b91c1c;">- ${data.discount} ৳</td></tr>` : ''}
         ${data.tax > 0 ? `<tr><td style="color:#1e4a76;">ভ্যাট (${data.tax}%)</td><td class="text-right">+ ${taxAmount.toFixed(2)} ৳</td></tr>` : ''}
-        <tr style="background:#eef2fa;"><td style="font-weight:800; font-size:11px;">মোট প্রদেয়</td><td class="text-right" style="font-weight:800; font-size:12px; color:#1e4a76;">${finalTotal.toFixed(2)} ৳</td></tr>
+        <tr style="background:#eef2fa;"><td style="font-weight:800; font-size:14px;">মোট প্রদেয়</td><td class="text-right" style="font-weight:800; font-size:16px; color:#1e4a76;">${finalTotal.toFixed(2)} ৳</td></tr>
     </table>
-    <div class="payment-status no-break">
+    <div class="payment-status">
         <span><strong>পরিশোধ:</strong> ${data.paymentStatus}</span>
         <span><strong>মাধ্যম:</strong> ${data.paymentMethod}</span>
     </div>
-    ${data.remark ? `<div class="remark-box no-break"><strong>নোট:</strong> ${escapeHtml(data.remark)}</div>` : ''}
-    <div class="footer no-break">
+    ${data.remark ? `<div class="remark-box"><strong>নোট:</strong> ${escapeHtml(data.remark)}</div>` : ''}
+    <div class="footer">
         <div class="footer-flex">
             <div class="receiver-signature">
                 <strong>প্রাপকের স্বাক্ষর</strong>
@@ -941,13 +791,13 @@ function generatePDFInvoiceHTML(data) {
                 <small>(রিসিভ করলো)</small>
             </div>
             <div class="qr-code">
-                <canvas id="${qrId}" width="50" height="50"></canvas>
+                <canvas id="${qrId}" width="70" height="70"></canvas>
                 <div><small>ভেরিফিকেশন</small></div>
             </div>
             <div class="stamp-area">
                 <div class="stamp-group">
-                    <div class="stamp-item"><img src="data:image/svg+xml,${encodeURIComponent(sealSvgSmall)}" alt="সিল"><small>সিল</small></div>
-                    <div class="stamp-item"><img src="data:image/svg+xml,${encodeURIComponent(signSvgSmall)}" alt="স্বাক্ষর"><small>স্বাক্ষর</small></div>
+                    <div class="stamp-item"><img src="data:image/svg+xml,${encodeURIComponent(sealSvg)}" alt="সিল"><small>সিল</small></div>
+                    <div class="stamp-item"><img src="data:image/svg+xml,${encodeURIComponent(signSvg)}" alt="স্বাক্ষর"><small>স্বাক্ষর</small></div>
                 </div>
                 <small>তারিখ: ${printDate}</small>
             </div>
@@ -966,17 +816,17 @@ function generatePDFInvoiceHTML(data) {
             var taxAmt = after * tax / 100;
             var total = after + taxAmt;
             var qrValue = '${data.shopName} | ${data.invoiceNo} | ${data.date} | Total: ' + total.toFixed(2) + ' BDT';
-            new QRious({ element: canvas, size: 50, value: qrValue, foreground: "#1e4a76" });
+            new QRious({ element: canvas, size: 70, value: qrValue, foreground: "#1e4a76" });
         }
         
-        // Direct PDF download without print dialog
+        // Auto download PDF without print dialog
         setTimeout(function() {
             var element = document.getElementById('invoiceContent');
             var opt = {
-                margin: [0.15, 0.15, 0.15, 0.15],
+                margin: [0.2, 0.2, 0.2, 0.2],
                 filename: '${fileName}',
-                image: { type: 'jpeg', quality: 0.95 },
-                html2canvas: { scale: 2.2, letterRendering: true, useCORS: true, logging: false, backgroundColor: '#ffffff' },
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2.5, letterRendering: true, useCORS: true, logging: false, backgroundColor: '#ffffff' },
                 jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
             };
             html2pdf().set(opt).from(element).save().then(function() {
@@ -992,60 +842,41 @@ function generatePDFInvoiceHTML(data) {
 </html>`;
 }
 
-// ========== প্রিন্ট ফাংশন (Fixed for mobile - opens in same tab) ==========
+// ========== প্রিন্ট ফাংশন ==========
 async function printInvoice(data) {
     showLoader("চালান প্রস্তুত হচ্ছে...");
     
-    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
     const html = generatePrintInvoiceHTML(data);
+    const printWindow = window.open('', '_blank');
     
-    if (isMobile) {
-        // For mobile: Open in a new tab and auto-print
-        const printWindow = window.open('', '_blank');
-        if (!printWindow) {
-            alert("পপ-আপ ব্লকার সক্রিয়! দয়া করে অনুমতি দিন।");
-            hideLoader();
-            return;
-        }
-        
-        printWindow.document.write(html);
-        printWindow.document.close();
-        
-        // Let the page load and auto-print via script inside HTML
-        setTimeout(() => {
-            hideLoader();
-        }, 1500);
-    } else {
-        // For desktop: Open in new tab and trigger print
-        const printWindow = window.open('', '_blank');
-        if (!printWindow) {
-            alert("পপ-আপ ব্লকার সক্রিয়! দয়া করে অনুমতি দিন।");
-            hideLoader();
-            return;
-        }
-        
-        printWindow.document.write(html);
-        printWindow.document.close();
-        
-        setTimeout(() => {
-            printWindow.focus();
-            printWindow.print();
-            hideLoader();
-            printWindow.onafterprint = () => {
-                printWindow.close();
-            };
-            setTimeout(() => {
-                if (!printWindow.closed) printWindow.close();
-            }, 10000);
-        }, 1000);
+    if (!printWindow) {
+        alert("পপ-আপ ব্লকার সক্রিয়! দয়া করে ব্রাউজার সেটিংসে পপ-আপ অনুমতি দিন।");
+        hideLoader();
+        return;
     }
+    
+    printWindow.document.write(html);
+    printWindow.document.close();
+    
+    setTimeout(() => {
+        printWindow.focus();
+        printWindow.print();
+        hideLoader();
+        printWindow.onafterprint = () => {
+            printWindow.close();
+        };
+        setTimeout(() => {
+            if (!printWindow.closed) printWindow.close();
+        }, 10000);
+    }, 1000);
 }
 
-// ========== PDF ডাউনলোড (Works on all devices) ==========
+// ========== PDF ডাউনলোড - Auto Download Without Print Dialog ==========
 async function downloadInvoicePDF(data) {
     showLoader("PDF তৈরি হচ্ছে, দয়া করে অপেক্ষা করুন...");
     
     try {
+        // Open a new window with PDF-optimized design
         const pdfWindow = window.open('', '_blank');
         
         if (!pdfWindow) {
@@ -1054,13 +885,13 @@ async function downloadInvoicePDF(data) {
             return false;
         }
         
+        // Generate PDF-specific HTML with auto-download
         const html = generatePDFInvoiceHTML(data);
         pdfWindow.document.write(html);
         pdfWindow.document.close();
         
-        setTimeout(() => {
-            hideLoader();
-        }, 1500);
+        // The PDF will auto-download via html2pdf in the new window
+        hideLoader();
         
         return true;
     } catch (err) {
