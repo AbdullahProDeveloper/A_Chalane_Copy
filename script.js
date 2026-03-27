@@ -179,7 +179,7 @@ const signSvgSmall = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 6
     <text x="70" y="55" fill="#2c5f8a" font-size="9" font-style="italic">Authorized</text>
 </svg>`;
 
-// Generate Print Invoice HTML (Mobile-optimized with working print)
+// Generate Print Invoice HTML (with auto-print on load)
 function generatePrintInvoiceHTML(data) {
     const company = {
         name: "Abdullah Enterprise",
@@ -272,9 +272,6 @@ function generatePrintInvoiceHTML(data) {
                 display: block;
                 overflow-x: auto;
                 -webkit-overflow-scrolling: touch;
-            }
-            th, td {
-                white-space: nowrap;
             }
         }
         .invoice-container {
@@ -465,6 +462,26 @@ function generatePrintInvoiceHTML(data) {
             border-top: 1px solid #e9edf2;
             padding-top: 10px;
         }
+        .print-button {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #1e4a76;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            z-index: 1000;
+        }
+        @media print {
+            .print-button {
+                display: none;
+            }
+        }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/qrious/dist/qrious.min.js"></script>
 </head>
@@ -542,6 +559,7 @@ function generatePrintInvoiceHTML(data) {
         <div class="footer-note">${company.web} | হটলাইন: ${company.phone} | ধন্যবাদান্তে</div>
     </div>
 </div>
+<button class="print-button" onclick="window.print()">🖨️ প্রিন্ট করুন</button>
 <script>
     (function() {
         var canvas = document.getElementById('${qrId}');
@@ -556,14 +574,12 @@ function generatePrintInvoiceHTML(data) {
             new QRious({ element: canvas, size: 80, value: qrValue, foreground: "#1e4a76" });
         }
         
-        // Auto trigger print for mobile after page loads
-        if (window.location.search === '?print' || /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+        // Auto trigger print on load for mobile
+        var isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        if(isMobile) {
             setTimeout(function() {
                 window.print();
-                window.onafterprint = function() {
-                    window.close();
-                };
-            }, 800);
+            }, 1000);
         }
     })();
 </script>
@@ -905,13 +921,13 @@ function generatePDFInvoiceHTML(data) {
         <tbody>
             ${itemsHtml}
         </tbody>
-     </table>
+    </table>
     <table class="totals-table no-break">
-         <tr><td style="width:65%">সাব-টোটাল</td><td class="text-right">${subtotal.toFixed(2)} ৳</td></tr>
+        <tr><td style="width:65%">সাব-টোটাল</td><td class="text-right">${subtotal.toFixed(2)} ৳</td></tr>
         ${data.discount > 0 ? `<tr><td style="color:#b91c1c;">ডিসকাউন্ট</td><td class="text-right" style="color:#b91c1c;">- ${data.discount} ৳</td></tr>` : ''}
         ${data.tax > 0 ? `<tr><td style="color:#1e4a76;">ভ্যাট (${data.tax}%)</td><td class="text-right">+ ${taxAmount.toFixed(2)} ৳</td></tr>` : ''}
         <tr style="background:#eef2fa;"><td style="font-weight:800; font-size:11px;">মোট প্রদেয়</td><td class="text-right" style="font-weight:800; font-size:12px; color:#1e4a76;">${finalTotal.toFixed(2)} ৳</td></tr>
-     </table>
+    </table>
     <div class="payment-status no-break">
         <span><strong>পরিশোধ:</strong> ${data.paymentStatus}</span>
         <span><strong>মাধ্যম:</strong> ${data.paymentMethod}</span>
@@ -976,96 +992,75 @@ function generatePDFInvoiceHTML(data) {
 </html>`;
 }
 
-// ========== প্রিন্ট ফাংশন (Fixed for mobile) ==========
+// ========== প্রিন্ট ফাংশন (Fixed for mobile - opens in same tab) ==========
 async function printInvoice(data) {
     showLoader("চালান প্রস্তুত হচ্ছে...");
     
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
     const html = generatePrintInvoiceHTML(data);
     
-    // Create a new window for printing
-    const printWindow = window.open('', '_blank');
-    
-    if (!printWindow) {
-        alert("পপ-আপ ব্লকার সক্রিয়! দয়া করে ব্রাউজার সেটিংসে পপ-আপ অনুমতি দিন।");
-        hideLoader();
-        return;
-    }
-    
-    printWindow.document.write(html);
-    printWindow.document.close();
-    
-    // Wait for content to load then trigger print
-    setTimeout(() => {
-        printWindow.focus();
-        
-        // For mobile devices, ensure print dialog appears
-        if (/Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
-            // Add a small delay for mobile
-            setTimeout(() => {
-                printWindow.print();
-                hideLoader();
-            }, 500);
-        } else {
-            printWindow.print();
+    if (isMobile) {
+        // For mobile: Open in a new tab and auto-print
+        const printWindow = window.open('', '_blank');
+        if (!printWindow) {
+            alert("পপ-আপ ব্লকার সক্রিয়! দয়া করে অনুমতি দিন।");
             hideLoader();
+            return;
         }
         
-        // Close window after print
-        printWindow.onafterprint = () => {
-            printWindow.close();
-        };
+        printWindow.document.write(html);
+        printWindow.document.close();
         
-        // Fallback close after 15 seconds
+        // Let the page load and auto-print via script inside HTML
         setTimeout(() => {
-            if (!printWindow.closed) printWindow.close();
-        }, 15000);
-    }, 1000);
+            hideLoader();
+        }, 1500);
+    } else {
+        // For desktop: Open in new tab and trigger print
+        const printWindow = window.open('', '_blank');
+        if (!printWindow) {
+            alert("পপ-আপ ব্লকার সক্রিয়! দয়া করে অনুমতি দিন।");
+            hideLoader();
+            return;
+        }
+        
+        printWindow.document.write(html);
+        printWindow.document.close();
+        
+        setTimeout(() => {
+            printWindow.focus();
+            printWindow.print();
+            hideLoader();
+            printWindow.onafterprint = () => {
+                printWindow.close();
+            };
+            setTimeout(() => {
+                if (!printWindow.closed) printWindow.close();
+            }, 10000);
+        }, 1000);
+    }
 }
 
-// ========== PDF ডাউনলোড (Mobile-optimized with direct download) ==========
+// ========== PDF ডাউনলোড (Works on all devices) ==========
 async function downloadInvoicePDF(data) {
     showLoader("PDF তৈরি হচ্ছে, দয়া করে অপেক্ষা করুন...");
     
     try {
-        // Check if mobile device
-        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        const pdfWindow = window.open('', '_blank');
         
-        if (isMobile) {
-            // For mobile: Create a new window with PDF design
-            const pdfWindow = window.open('', '_blank');
-            
-            if (!pdfWindow) {
-                alert("পপ-আপ ব্লকার সক্রিয়! দয়া করে অনুমতি দিন।");
-                hideLoader();
-                return false;
-            }
-            
-            const html = generatePDFInvoiceHTML(data);
-            pdfWindow.document.write(html);
-            pdfWindow.document.close();
-            
-            // PDF will auto-download via html2pdf in the new window
-            setTimeout(() => {
-                hideLoader();
-            }, 1500);
-        } else {
-            // For desktop: Open new window with PDF-optimized design
-            const pdfWindow = window.open('', '_blank');
-            
-            if (!pdfWindow) {
-                alert("পপ-আপ ব্লকার সক্রিয়! দয়া করে অনুমতি দিন।");
-                hideLoader();
-                return false;
-            }
-            
-            const html = generatePDFInvoiceHTML(data);
-            pdfWindow.document.write(html);
-            pdfWindow.document.close();
-            
-            setTimeout(() => {
-                hideLoader();
-            }, 1500);
+        if (!pdfWindow) {
+            alert("পপ-আপ ব্লকার সক্রিয়! দয়া করে অনুমতি দিন।");
+            hideLoader();
+            return false;
         }
+        
+        const html = generatePDFInvoiceHTML(data);
+        pdfWindow.document.write(html);
+        pdfWindow.document.close();
+        
+        setTimeout(() => {
+            hideLoader();
+        }, 1500);
         
         return true;
     } catch (err) {
