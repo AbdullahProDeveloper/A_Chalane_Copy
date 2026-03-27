@@ -157,7 +157,7 @@ const signSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 60" wi
     <text x="70" y="55" fill="#2c5f8a" font-size="9" font-style="italic">Authorized</text>
 </svg>`;
 
-// Generate Professional Invoice HTML for Print
+// Generate Professional Print Invoice HTML
 function generatePrintInvoiceHTML(data) {
     const company = {
         name: "Abdullah Enterprise",
@@ -173,15 +173,16 @@ function generatePrintInvoiceHTML(data) {
     let taxAmount = afterDiscount * data.tax / 100;
     let finalTotal = afterDiscount + taxAmount;
     const printDate = new Date().toLocaleDateString('bn-BD', { year: 'numeric', month: 'long', day: 'numeric' });
+    const printTime = new Date().toLocaleTimeString('bn-BD', { hour: '2-digit', minute: '2-digit' });
     const qrId = 'qr_' + Date.now() + '_' + Math.random().toString(36).substr(2, 8);
     
     const itemsHtml = data.items.map((item, idx) => `
-        <tr>
-            <td style="padding: 12px 10px; border: 1px solid #e2e8f0; text-align:center;">${idx + 1}</td>
-            <td style="padding: 12px 10px; border: 1px solid #e2e8f0;">${escapeHtml(item.name)}</td>
-            <td style="padding: 12px 10px; border: 1px solid #e2e8f0; text-align:center;">${item.qty}</td>
-            <td style="padding: 12px 10px; border: 1px solid #e2e8f0; text-align:right;">${item.price.toFixed(2)}</td>
-            <td style="padding: 12px 10px; border: 1px solid #e2e8f0; text-align:right; font-weight:600;">${item.total.toFixed(2)}</td>
+        <tr style="border-bottom: 1px solid #e2e8f0;">
+            <td style="padding: 12px 10px; text-align:center;">${idx + 1}</td>
+            <td style="padding: 12px 10px;">${escapeHtml(item.name)}</td>
+            <td style="padding: 12px 10px; text-align:center;">${item.qty}</td>
+            <td style="padding: 12px 10px; text-align:right;">${item.price.toFixed(2)}</td>
+            <td style="padding: 12px 10px; text-align:right; font-weight:600;">${item.total.toFixed(2)}</td>
         </tr>
     `).join('');
     
@@ -198,7 +199,7 @@ function generatePrintInvoiceHTML(data) {
             box-sizing: border-box;
         }
         body {
-            font-family: 'Segoe UI', 'Roboto', 'Arial', sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Arial', sans-serif;
             padding: 0.4in;
             background: white;
             font-size: 13px;
@@ -216,24 +217,63 @@ function generatePrintInvoiceHTML(data) {
             .no-break {
                 page-break-inside: avoid;
             }
+            .print-button {
+                display: none !important;
+            }
+        }
+        @media (max-width: 768px) {
+            body {
+                padding: 15px;
+            }
+            .header {
+                flex-direction: column;
+                text-align: center;
+                gap: 15px;
+            }
+            .customer-flex {
+                flex-direction: column;
+            }
+            .footer-flex {
+                flex-direction: column;
+                text-align: center;
+                gap: 20px;
+            }
+            .stamp-area {
+                text-align: center;
+            }
+            .stamp-group {
+                justify-content: center;
+            }
+            .totals-table {
+                max-width: 100%;
+            }
+            table {
+                display: block;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
         }
         .invoice-container {
             max-width: 100%;
             margin: 0 auto;
             background: white;
+            border-radius: 12px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.05);
         }
         .header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             border-bottom: 3px solid #d4af37;
-            padding-bottom: 18px;
-            margin-bottom: 20px;
+            padding-bottom: 20px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
         }
         .company-info h1 {
             color: #1e3c72;
             font-size: 28px;
             margin: 0;
+            letter-spacing: -0.5px;
         }
         .company-info p {
             color: #4a627a;
@@ -243,21 +283,22 @@ function generatePrintInvoiceHTML(data) {
         .contact-row {
             display: flex;
             justify-content: space-between;
-            background: #f8fafd;
+            background: linear-gradient(135deg, #f8fafd 0%, #f1f5f9 100%);
             padding: 12px 18px;
-            border-radius: 14px;
+            border-radius: 12px;
             margin-bottom: 20px;
             font-size: 11px;
-            border: 1px solid #e9edf2;
+            border: 1px solid #e2e8f0;
             flex-wrap: wrap;
             gap: 8px;
         }
         .customer-section {
-            background: #f9fbfd;
-            padding: 18px 24px;
-            border-radius: 20px;
+            background: linear-gradient(135deg, #f9fbfd 0%, #ffffff 100%);
+            padding: 20px 24px;
+            border-radius: 16px;
             margin: 15px 0 20px;
-            border: 1px solid #e9edf2;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
         }
         .customer-flex {
             display: flex;
@@ -283,15 +324,17 @@ function generatePrintInvoiceHTML(data) {
             margin-bottom: 6px;
         }
         .invoice-badge {
-            background: #1e4a76;
+            background: linear-gradient(135deg, #1e4a76 0%, #0f2c44 100%);
             padding: 12px 28px;
             border-radius: 60px;
             text-align: center;
+            box-shadow: 0 2px 8px rgba(30,74,118,0.2);
         }
         .invoice-badge .inv-no {
             color: white;
             font-size: 18px;
             font-weight: 800;
+            letter-spacing: 1px;
         }
         .invoice-badge .inv-date {
             color: rgba(255,255,255,0.9);
@@ -304,10 +347,12 @@ function generatePrintInvoiceHTML(data) {
             margin: 20px 0;
         }
         th {
-            background: #eef2fa;
+            background: linear-gradient(135deg, #eef2fa 0%, #e6edf5 100%);
             padding: 12px 10px;
             border: 1px solid #e2e8f0;
             font-weight: 700;
+            font-size: 13px;
+            color: #1e3c72;
         }
         td {
             padding: 10px 10px;
@@ -342,19 +387,20 @@ function generatePrintInvoiceHTML(data) {
         .remark-box {
             background: #fefce8;
             padding: 12px 18px;
-            border-radius: 16px;
+            border-radius: 12px;
             margin-bottom: 18px;
             border-left: 4px solid #eab308;
+            font-size: 11px;
         }
         .footer {
-            margin-top: 25px;
+            margin-top: 30px;
         }
         .footer-flex {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-top: 2px solid #cbd5e1;
-            padding-top: 22px;
+            border-top: 2px solid #e2e8f0;
+            padding-top: 20px;
             flex-wrap: wrap;
             gap: 20px;
         }
@@ -367,6 +413,13 @@ function generatePrintInvoiceHTML(data) {
         .qr-code {
             text-align: center;
         }
+        .qr-code canvas {
+            width: 80px;
+            height: 80px;
+        }
+        .qr-code div small {
+            font-size: 9px;
+        }
         .stamp-area {
             text-align: right;
         }
@@ -375,6 +428,7 @@ function generatePrintInvoiceHTML(data) {
             gap: 15px;
             justify-content: flex-end;
             margin-bottom: 8px;
+            flex-wrap: wrap;
         }
         .stamp-item {
             text-align: center;
@@ -395,6 +449,29 @@ function generatePrintInvoiceHTML(data) {
             border-top: 1px solid #e9edf2;
             padding-top: 12px;
         }
+        .print-button {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #1e4a76 0%, #0f2c44 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            z-index: 1000;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .print-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.3);
+        }
+        .print-button:active {
+            transform: scale(0.98);
+        }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/qrious/dist/qrious.min.js"></script>
 </head>
@@ -414,21 +491,21 @@ function generatePrintInvoiceHTML(data) {
     <div class="customer-section">
         <div class="customer-flex">
             <div class="customer-details">
-                <strong>ক্রেতার তথ্য</strong>
-                <div class="shop-name">${escapeHtml(data.shopName) || '——'}</div>
+                <strong>📋 ক্রেতার তথ্য</strong>
+                <div class="shop-name">🏪 ${escapeHtml(data.shopName) || '——'}</div>
                 <div>${escapeHtml(data.customerName) ? '👤 ' + escapeHtml(data.customerName) : ''} ${data.customerMobile ? '📞 ' + escapeHtml(data.customerMobile) : ''}</div>
                 <div>📍 ${escapeHtml(data.customerAddress) || '——'}</div>
             </div>
             <div class="invoice-badge">
-                <div class="inv-no">${data.invoiceNo}</div>
-                <div class="inv-date">${data.date} | ${data.time.replace(/-/g, ':')}</div>
+                <div class="inv-no">🧾 ${data.invoiceNo}</div>
+                <div class="inv-date">📅 ${data.date} | ⏰ ${data.time.replace(/-/g, ':')}</div>
             </div>
         </div>
     </div>
     <table class="no-break">
         <thead>
             <tr>
-                <th style="width:8%">ক্রম</th>
+                <th style="width:8%">#</th>
                 <th style="width:52%">পণ্যের বিবরণ</th>
                 <th style="width:12%">পরিমাণ</th>
                 <th style="width:14%">দাম (৳)</th>
@@ -443,35 +520,38 @@ function generatePrintInvoiceHTML(data) {
         <tr><td style="width:65%">সাব-টোটাল</td><td class="text-right">${subtotal.toFixed(2)} ৳</td></tr>
         ${data.discount > 0 ? `<tr><td style="color:#b91c1c;">ডিসকাউন্ট</td><td class="text-right" style="color:#b91c1c;">- ${data.discount} ৳</td></tr>` : ''}
         ${data.tax > 0 ? `<tr><td style="color:#1e4a76;">ভ্যাট / ট্যাক্স (${data.tax}%)</td><td class="text-right">+ ${taxAmount.toFixed(2)} ৳</td></tr>` : ''}
-        <tr style="background:#eef2fa;"><td style="font-weight:800; font-size:18px;">মোট প্রদেয়</td><td class="text-right" style="font-weight:800; font-size:20px; color:#1e4a76;">${finalTotal.toFixed(2)} ৳</td></tr>
+        <tr style="background: linear-gradient(135deg, #eef2fa 0%, #e6edf5 100%);"><td style="font-weight:800; font-size:18px;">মোট প্রদেয়</td><td class="text-right" style="font-weight:800; font-size:20px; color:#1e4a76;">${finalTotal.toFixed(2)} ৳</td></tr>
     </table>
     <div class="payment-status no-break">
-        <span><strong>পরিশোধ অবস্থা:</strong> ${data.paymentStatus}</span>
-        <span><strong>পেমেন্ট মাধ্যম:</strong> ${data.paymentMethod}</span>
+        <span><strong>💳 পরিশোধ অবস্থা:</strong> ${data.paymentStatus}</span>
+        <span><strong>🏦 পেমেন্ট মাধ্যম:</strong> ${data.paymentMethod}</span>
     </div>
-    ${data.remark ? `<div class="remark-box no-break"><strong>নোট:</strong> ${escapeHtml(data.remark)}</div>` : ''}
+    ${data.remark ? `<div class="remark-box no-break"><strong>📝 নোট:</strong> ${escapeHtml(data.remark)}</div>` : ''}
     <div class="footer no-break">
         <div class="footer-flex">
             <div class="receiver-signature">
-                <strong>প্রাপকের স্বাক্ষর</strong>
-                <div class="sign-line">____________________</div>
+                <strong>✍️ প্রাপকের স্বাক্ষর</strong>
+                <div class="sign-line"></div>
                 <small>(রিসিভ করলো)</small>
             </div>
             <div class="qr-code">
                 <canvas id="${qrId}" width="80" height="80"></canvas>
-                <div><small>ভেরিফিকেশন কোড</small></div>
+                <div><small>🔍 ভেরিফিকেশন কোড</small></div>
             </div>
             <div class="stamp-area">
                 <div class="stamp-group">
                     <div class="stamp-item"><img src="data:image/svg+xml,${encodeURIComponent(sealSvg)}" alt="সিল"><small>সিল</small></div>
                     <div class="stamp-item"><img src="data:image/svg+xml,${encodeURIComponent(signSvg)}" alt="স্বাক্ষর"><small>স্বাক্ষর</small></div>
                 </div>
-                <small>তারিখ: ${printDate}</small>
+                <small>📆 তারিখ: ${printDate} | ⏰ ${printTime}</small>
             </div>
         </div>
-        <div class="footer-note">${company.web} | হটলাইন: ${company.phone} | ধন্যবাদান্তে</div>
+        <div class="footer-note">
+            🌟 ${company.web} | 📞 হটলাইন: ${company.phone} | 🙏 ধন্যবাদান্তে 🌟
+        </div>
     </div>
 </div>
+<button class="print-button" onclick="window.print()">🖨️ প্রিন্ট / সেভ এজ পিডিএফ</button>
 <script>
     (function() {
         var canvas = document.getElementById('${qrId}');
@@ -485,13 +565,20 @@ function generatePrintInvoiceHTML(data) {
             var qrValue = '${data.shopName} | ${data.invoiceNo} | ${data.date} | Total: ' + total.toFixed(2) + ' BDT';
             new QRious({ element: canvas, size: 80, value: qrValue, foreground: "#1e4a76" });
         }
+        
+        // Auto trigger print for mobile devices
+        if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+            setTimeout(function() {
+                window.print();
+            }, 1500);
+        }
     })();
 </script>
 </body>
 </html>`;
 }
 
-// Generate Professional PDF HTML with Auto Download
+// Generate Professional PDF Invoice HTML with Auto Download
 function generatePDFInvoiceHTML(data) {
     const company = {
         name: "Abdullah Enterprise",
@@ -777,7 +864,7 @@ function generatePDFInvoiceHTML(data) {
         ${data.discount > 0 ? `<tr><td style="color:#b91c1c;">ডিসকাউন্ট</td><td class="text-right" style="color:#b91c1c;">- ${data.discount} ৳</td></tr>` : ''}
         ${data.tax > 0 ? `<tr><td style="color:#1e4a76;">ভ্যাট (${data.tax}%)</td><td class="text-right">+ ${taxAmount.toFixed(2)} ৳</td></tr>` : ''}
         <tr style="background:#eef2fa;"><td style="font-weight:800; font-size:14px;">মোট প্রদেয়</td><td class="text-right" style="font-weight:800; font-size:16px; color:#1e4a76;">${finalTotal.toFixed(2)} ৳</td></tr>
-    </table>
+     </table>
     <div class="payment-status">
         <span><strong>পরিশোধ:</strong> ${data.paymentStatus}</span>
         <span><strong>মাধ্যম:</strong> ${data.paymentMethod}</span>
@@ -835,22 +922,24 @@ function generatePDFInvoiceHTML(data) {
                 console.error('PDF Error:', err);
                 setTimeout(function() { window.close(); }, 500);
             });
-        }, 1000);
+        }, 1200);
     })();
 </script>
 </body>
 </html>`;
 }
 
-// ========== প্রিন্ট ফাংশন ==========
+// ========== প্রিন্ট ফাংশন (Enhanced for Mobile) ==========
 async function printInvoice(data) {
     showLoader("চালান প্রস্তুত হচ্ছে...");
     
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
     const html = generatePrintInvoiceHTML(data);
+    
     const printWindow = window.open('', '_blank');
     
     if (!printWindow) {
-        alert("পপ-আপ ব্লকার সক্রিয়! দয়া করে ব্রাউজার সেটিংসে পপ-আপ অনুমতি দিন।");
+        alert("পপ-আপ ব্লকার সক্রিয়! দয়া করে অনুমতি দিন।");
         hideLoader();
         return;
     }
@@ -858,25 +947,37 @@ async function printInvoice(data) {
     printWindow.document.write(html);
     printWindow.document.close();
     
-    setTimeout(() => {
-        printWindow.focus();
-        printWindow.print();
-        hideLoader();
-        printWindow.onafterprint = () => {
-            printWindow.close();
-        };
+    if (isMobile) {
+        // For mobile, let the auto-print script in the HTML handle it
+        setTimeout(() => {
+            hideLoader();
+        }, 2000);
+        
+        // Auto close after 30 seconds
         setTimeout(() => {
             if (!printWindow.closed) printWindow.close();
-        }, 10000);
-    }, 1000);
+        }, 30000);
+    } else {
+        // For desktop, trigger print manually
+        setTimeout(() => {
+            printWindow.focus();
+            printWindow.print();
+            hideLoader();
+            printWindow.onafterprint = () => {
+                printWindow.close();
+            };
+            setTimeout(() => {
+                if (!printWindow.closed) printWindow.close();
+            }, 10000);
+        }, 1200);
+    }
 }
 
-// ========== PDF ডাউনলোড - Auto Download Without Print Dialog ==========
+// ========== PDF ডাউনলোড - Auto Download ==========
 async function downloadInvoicePDF(data) {
     showLoader("PDF তৈরি হচ্ছে, দয়া করে অপেক্ষা করুন...");
     
     try {
-        // Open a new window with PDF-optimized design
         const pdfWindow = window.open('', '_blank');
         
         if (!pdfWindow) {
@@ -885,7 +986,6 @@ async function downloadInvoicePDF(data) {
             return false;
         }
         
-        // Generate PDF-specific HTML with auto-download
         const html = generatePDFInvoiceHTML(data);
         pdfWindow.document.write(html);
         pdfWindow.document.close();
